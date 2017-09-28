@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.sat.sat;
+package clases;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -20,7 +20,7 @@ public class DB {
     private static final String USER = "root";
     private static final String PASS = "52525";
 
-static Connection getConnection(){
+static private Connection getConnection(){
 	Connection con = null;
 	try{
 		con = DriverManager.getConnection(DB_URL, USER, PASS);
@@ -30,7 +30,7 @@ static Connection getConnection(){
 	return con;
 }
 
-static ArrayList select(String campos, String tablas, String condiciones){
+static public ArrayList select(String campos, String tablas, String condiciones){
 	Statement st;
 	ResultSet rs;
         ArrayList al=null;
@@ -51,7 +51,7 @@ static ArrayList select(String campos, String tablas, String condiciones){
         return al;
 }
 
-static boolean insert(String campos, String tablas, String valores){
+static public boolean insert(String campos, String tablas, String valores){
 	Statement st;
         Connection con;
 	try{
@@ -65,7 +65,7 @@ static boolean insert(String campos, String tablas, String valores){
 	}
 	return false;
 }
-static boolean update(String tabla, String sets, String condiciones){
+static public boolean update(String tabla, String sets, String condiciones){
 	Statement st;
         Connection con;
 	try{
@@ -80,7 +80,7 @@ static boolean update(String tabla, String sets, String condiciones){
 	return false;
 }
 
-static boolean delete(String tablas, String condiciones){
+static public boolean delete(String tablas, String condiciones){
 	Statement st;
         Connection con;
 	try{
