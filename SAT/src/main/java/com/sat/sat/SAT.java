@@ -64,15 +64,20 @@ public class SAT {
     @WebMethod(operationName = "registro_Id_Compra")
     public String registro_Id_Compra(@WebParam(name = "id_Transferencia") int id_Transferencia, @WebParam(name = "monto_Compra") double monto_Compra) {
         String Salida = "";
-        if (id_Transferencia != 0 && monto_Compra != 0) {
-            Salida = "{\n"
-                    + "\"respuesta\" : \"true\" \n"
-                    + "}";
-        } else {
-            Salida = "{\n"
-                    + "\"respuesta\" : \"false\" \n"
-                    + "}";
+        boolean error=false;
+        String txt_error="";
+        if(monto_Compra<0 || id_Transferencia <0){
+            error=true;
+            txt_error="El monto y código de transferencia deben ser de valor positivo.";
+        }else if(DB.insert("monto", "transferencia", ""+monto_Compra)){
+            error=true;
+            txt_error="Error de ejecución de consulta.";
         }
+        
+        Salida = "{\n"
+                + "\"status\" : "+(error?1:0)+",\n"
+                + "\"descripcion\" : "+txt_error+"\n"
+                + "}";
         return Salida;
     }
 
