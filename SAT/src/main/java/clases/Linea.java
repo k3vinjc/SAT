@@ -11,11 +11,11 @@ package clases;
  */
 public class Linea {
 
-    int cod_linea;
-    String nombre;
-    double factor;
-    Marca marca;
-    String txt_error;
+    public int cod_linea;
+    public String nombre;
+    public double factor;
+    public Marca marca;
+    private String txt_error;
     
     private static final double FACTOR_DEFECTO = 400;
 
@@ -75,5 +75,14 @@ public class Linea {
             }
         }
         return 0;
+    }
+    
+    public String getError(){
+        return txt_error;
+    }
+    
+    @Override
+    public String toString(){
+        return nombre.isEmpty()?"Error":nombre;
     }
 }

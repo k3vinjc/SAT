@@ -11,9 +11,9 @@ package clases;
  */
 public class Marca {
 
-    int cod_marca;
-    String nombre;
-    String txt_error;
+    public int cod_marca;
+    public String nombre;
+    private String txt_error;
 
     public Marca(String nombre) {
         txt_error = "";
@@ -66,5 +66,15 @@ public class Marca {
             }
         }
         return 0;
+    }
+    
+    
+    public String getError(){
+        return txt_error;
+    }
+    
+    @Override
+    public String toString(){
+        return nombre.isEmpty()?"Error":nombre;
     }
 }
