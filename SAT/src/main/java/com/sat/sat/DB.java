@@ -36,8 +36,8 @@ static ArrayList select(String campos, String tablas, String condiciones){
         ArrayList al=null;
         Connection con;
 	try{
-                if((con=getConnection())==null)return new ArrayList();
-		st = getConnection().createStatement();
+                if((con=getConnection())==null)return null;
+		st = con.createStatement();
 		rs = st.executeQuery("select " + campos + " from " + tablas + (condiciones.isEmpty()?"":("where "+condiciones+";")));
                 al=new ArrayList();
 		while(rs.next()){

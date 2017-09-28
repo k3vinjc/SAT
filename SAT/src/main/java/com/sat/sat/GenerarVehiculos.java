@@ -9,13 +9,19 @@ package com.sat.sat;
  *
  * @author kevinj
  */
-public class Pruebas {
+public class GenerarVehiculos {
     public static void main(String args[]){
         String marca="",linea="",lexema="";
-        int state=0, numMarca=1, numLinea=1;
+        int state=0, numMarca=0;
         char letras[]=ml.toCharArray();
-        for (int i = 0; i < letras.length; i++) {
-            char c = letras[i];
+        for (int i = 0; i <= letras.length; i++) {
+            char c;
+            if(i==letras.length){
+                c=' ';
+                state=1;
+            }else{
+                c=letras[i];
+            }
             switch(state){
                 case 0:
                     if(c!='\n'){
@@ -23,15 +29,17 @@ public class Pruebas {
                     }else{
                         state++;
                     }
+                    break;
                 case 1:
                     if(c!='\n'){
-                        linea=lexema;
+                        linea=lexema.trim();
                         i--;
-                        System.out.println("insert into linea(marca,nombre,factor) values ("+numMarca+",'"+linea+"',"+
-                                a/*Math.dos puntos decimales*/(Math.random()*200+100)+")");
-                        
+                        /*System.out.println("insert into linea(marca,nombre,factor) values ("+numMarca+",'"+linea+"',"+
+                                (Math.random()*200+100)+")");*/
+                        if(i==letras.length-1) i+=2;
                     }else{
-                        marca=lexema;
+                        marca=lexema.trim();numMarca++;
+                        System.out.println("insert into marca(nombre) values ('"+marca+"');");
                     }
                     lexema="";
                     state=0;
