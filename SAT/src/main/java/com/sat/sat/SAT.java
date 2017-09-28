@@ -28,9 +28,12 @@ public class SAT {
         boolean error=false;
         String txt_error="";
         double costo=-1;
+        ArrayList costos;
         
-        ArrayList costos = DB.select("marca,modelo", "marca", "marca='"+marca+"' and nombre='"+linea+"'");
-        if (costos==null){
+        if(marca.isEmpty()||linea.isEmpty()){
+            error=true;
+            txt_error="El parámetro \"marca\" o \"linea\" vienen vacíos.";
+        }else if((costos= DB.select("marca,modelo", "marca", "marca='"+marca+"' and nombre='"+linea+"'"))==null){
             error=true;
             txt_error="Error de ejecución de consulta.";
         }else if (costos.size() > 1) {
@@ -59,7 +62,7 @@ public class SAT {
     }
 
     @WebMethod(operationName = "registro_Id_Compra")
-    public String registro_Id_Compra(@WebParam(name = "id_Transferencia") int id_Transferencia, @WebParam(name = "monto_Compra") Double monto_Compra) {
+    public String registro_Id_Compra(@WebParam(name = "id_Transferencia") int id_Transferencia, @WebParam(name = "monto_Compra") double monto_Compra) {
         String Salida = "";
         if (id_Transferencia != 0 && monto_Compra != 0) {
             Salida = "{\n"
