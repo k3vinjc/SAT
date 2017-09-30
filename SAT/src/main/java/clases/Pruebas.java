@@ -11,7 +11,7 @@ package clases;
  */
 public class Pruebas {
     public static void main(String args[]){
-        crearManifiesto();
+        crearDeclaracion();
     }
     
     private static void hacerMinusculas(){
@@ -490,7 +490,7 @@ public class Pruebas {
     }
     
     private static void crearDeclaracion(){
-        Declaracion l=new Declaracion("volvo", "v70", 2000, 50, "23-5-1999");
+        Declaracion l=new Declaracion("volvo", "v70", 2000, 50, "1999-5-23");
         if(l.cod_declaracion==0)System.out.println(l.getError());
         else System.out.println("Código: "+l.cod_declaracion);
         

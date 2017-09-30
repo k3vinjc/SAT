@@ -51,12 +51,12 @@ public class Manifiesto {
         if (!validarFormatoFecha()) {
             return 0;
         }
-        
+        DB db=new DB();
         java.util.ArrayList consulta;
-        if (!DB.insert("marca, linea, modelo, fecha_entrada, pais_origen", "manifiesto", marca.cod_marca+","+linea.cod_linea+","+modelo+",'"+fecha_entrada+"','"+pais_origen+"'")) {
-            txt_error = "No se pudo agregar el manifiesto con los datos: \nMarca: "+marca.cod_marca+"\nLinea: "+linea.cod_linea+"\nModelo: "+modelo+"\nFecha:'"+fecha_entrada+"'\nPais Origen:'"+pais_origen+"'";
-        } else if ((consulta = DB.select("max(cod_manifiesto) as codman", "manifiesto", "")) == null) {
-            txt_error = "Error de ejecución de consulta de manifiesto después de crearlo.";
+        if (!db.insert("marca, linea, modelo, fecha_entrada, pais_origen", "manifiesto", marca.cod_marca+","+linea.cod_linea+","+modelo+",'"+fecha_entrada+"','"+pais_origen+"'")) {
+            txt_error = "No se pudo agregar el manifiesto con los datos: \nMarca: "+marca.cod_marca+"\nLinea: "+linea.cod_linea+"\nModelo: "+modelo+"\nFecha:'"+fecha_entrada+"'\nPais Origen:'"+pais_origen+"'"+".\nSQL: "+db.getError();
+        } else if ((consulta = db.select("max(cod_manifiesto) as codman", "manifiesto", "")) == null) {
+            txt_error = "Error de ejecución de consulta de manifiesto después de crearlo"+".\nSQL: "+db.getError();
         } else if (consulta.isEmpty()) {
             txt_error = "No se creó la el manifiesto con los datos:  \nMarca: "+marca.cod_marca+"\nLinea: "+linea.cod_linea+"\nModelo: "+modelo+"\nFecha:'"+fecha_entrada+"'\nPais Origen:'"+pais_origen+"'";
         } else {
@@ -64,7 +64,7 @@ public class Manifiesto {
                 cod_manifiesto = ((java.sql.ResultSet) (consulta.get(0))).getInt("codman");
                 return cod_manifiesto;
             } catch (Exception ex) {
-                txt_error = "Campo \"cod_linea\" o \"factor\" incorrecto o no encontrado en consulta posterior a supuesta creación de Linea.";
+                txt_error = "Campo \"cod_linea\" o \"factor\" incorrecto o no encontrado en consulta posterior a supuesta creación de Linea.\nError: "+ex.getMessage();
                 ex.printStackTrace();
             }
         }

@@ -26,8 +26,9 @@ public class Marca {
      */
     private boolean buscarMarca(String nombre) {
         java.util.ArrayList consulta;
-        if ((consulta = DB.select("cod_marca", "marca", "nombre = '" + nombre + "'")) == null) {
-            txt_error = "Error de ejecución de consulta de marca \""+nombre+"\".";
+        DB db=new DB();
+        if ((consulta = db.select("cod_marca", "marca", "nombre = '" + nombre + "'")) == null) {
+            txt_error = "Error de ejecución de consulta de marca \""+nombre+"\".\n SQL Error: "+db.getError();
             return false;
         } else if (consulta.size() > 1) {
             txt_error = "Existen dos marcas con el mismo nombre \""+nombre+"\".";
@@ -49,10 +50,11 @@ public class Marca {
 
     private int crearMarca(String nombre) {
         java.util.ArrayList consulta;
-        if (!DB.insert("nombre", "marca", "'" + nombre + "'")) {
-            txt_error = "No se pudo agregar la marca \"" + nombre + "\".";
-        } else if ((consulta = DB.select("cod_marca", "marca", "nombre = '" + nombre + "'")) == null) {
-            txt_error = "Error de ejecución de consulta de marca posterior.";
+        DB db=new DB();
+        if (!db.insert("nombre", "marca", "'" + nombre + "'")) {
+            txt_error = "No se pudo agregar la marca \"" + nombre + "\""+".\nSQL: "+db.getError();
+        } else if ((consulta = db.select("cod_marca", "marca", "nombre = '" + nombre + "'")) == null) {
+            txt_error = "Error de ejecución de consulta de marca posterior"+".\nSQL: "+db.getError();
         } else if (consulta.size() > 1) {
             txt_error = "Existen dos marcas con el mismo nombre.";
         } else if (consulta.isEmpty()) {

@@ -58,22 +58,22 @@ public class Declaracion {
         if (!validarFormatoFecha()) {
             return 0;
         }
-
+        DB db=new DB();
         java.util.ArrayList consulta;
-        if (!DB.insert("marca, linea, modelo, fecha_declaracion, precio",
+        if (!db.insert("marca, linea, modelo, fecha_declaracion, precio",
                 "declaracion", 
                 marca.cod_marca + "," + linea.cod_linea + "," + modelo + ",'" + fecha_declaracion + "'," + precio)) {
-            txt_error = "No se pudo agregar el manifiesto con los datos: \nMarca: " + marca.cod_marca + "\nLinea: " + linea.cod_linea + "\nModelo: " + modelo + "\nFecha:'" + fecha_declaracion + "'\nPrecio: " + precio;
-        } else if ((consulta = DB.select("max(cod_manifiesto) as codman", "manifiesto", "")) == null) {
-            txt_error = "Error de ejecución de consulta de manifiesto después de crearlo.";
+            txt_error = "No se pudo agregar el manifiesto con los datos: \nMarca: " + marca.cod_marca + "\nLinea: " + linea.cod_linea + "\nModelo: " + modelo + "\nFecha:'" + fecha_declaracion + "'\nPrecio: " + precio+".\nSQL: "+db.getError();
+        } else if ((consulta = db.select("max(cod_manifiesto) as codman", "manifiesto", "")) == null) {
+            txt_error = "Error de ejecución de consulta de manifiesto después de crearlo."+"\nSQL: "+db.getError();
         } else if (consulta.isEmpty()) {
-            txt_error = "No se creó la el manifiesto con los datos: \nMarca: " + marca.cod_marca + "\nLinea: " + linea.cod_linea + "\nModelo: " + modelo + "\nFecha:'" + fecha_declaracion + "'\nPrecio: " + precio;
+            txt_error = "No se creó el manifiesto con los datos: \nMarca: " + marca.cod_marca + "\nLinea: " + linea.cod_linea + "\nModelo: " + modelo + "\nFecha:'" + fecha_declaracion + "'\nPrecio: " + precio;
         } else {
             try {
                 cod_declaracion = ((java.sql.ResultSet) (consulta.get(0))).getInt("codman");
                 return cod_declaracion;
             } catch (Exception ex) {
-                txt_error = "Campo \"codman\" incorrecto en consulta posterior a supuesta creación de Manifiesto.";
+                txt_error = "Campo \"codman\" incorrecto en consulta posterior a supuesta creación de Manifiesto. Error: "+ex.getMessage();
                 ex.printStackTrace();
             }
         }

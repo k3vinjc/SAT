@@ -31,10 +31,11 @@ public class Linea {
      */
     private boolean buscarLinea(String nombre) {
         java.util.ArrayList consulta;
+        DB db=new DB();
         if(marca.cod_marca==0){
             txt_error="La marca no existe. Tiene código \"0\" nombre: \""+marca.nombre+"\".";
-        }else if ((consulta = DB.select("cod_linea,factor", "linea", "marca='" + marca.cod_marca + "' and nombre='" + nombre + "'")) == null) {
-            txt_error = "Error de ejecución de consulta de linea \""+nombre+"\".";
+        }else if ((consulta = db.select("cod_linea,factor", "linea", "marca='" + marca.cod_marca + "' and nombre='" + nombre + "'")) == null) {
+            txt_error = "Error de ejecución de consulta de linea \""+nombre+"\".\n SQL Error: "+db.getError();
         } else if (consulta.size() > 1) {
             txt_error = "Linea encontrada dos veces con el mismo nombre \""+nombre+"\".";
         } else if (consulta.isEmpty()) {
@@ -54,12 +55,13 @@ public class Linea {
 
     private int crearLinea(String nombre, double factor, Marca marca) {
         java.util.ArrayList consulta;
+        DB db=new DB();
         if(marca.cod_marca==0){
             txt_error="El codigo de marca para crear nueva linea es \"0\".";
-        }else if (!DB.insert("nombre,factor,marca", "marca", "'" + nombre + "',"+Linea.FACTOR_DEFECTO+","+marca.cod_marca)) {
-            txt_error = "No se pudo agregar la linea \"" + nombre + "\" para la marca \""+marca.nombre+"\".";
-        } else if ((consulta = DB.select("cod_linea", "linea", "nombre = '" + nombre + "' and marca="+marca.cod_marca)) == null) {
-            txt_error = "Error de ejecución de consulta de marca posterior.";
+        }else if (!db.insert("nombre,factor,marca", "marca", "'" + nombre + "',"+Linea.FACTOR_DEFECTO+","+marca.cod_marca)) {
+            txt_error = "No se pudo agregar la linea \"" + nombre + "\" para la marca \""+marca.nombre+"\".\nSQL error: "+db.getError();
+        } else if ((consulta = db.select("cod_linea", "linea", "nombre = '" + nombre + "' and marca="+marca.cod_marca)) == null) {
+            txt_error = "Error de ejecución de consulta de marca posterior.\n SQL Error: "+db.getError();
         } else if (consulta.size() > 1) {
             txt_error = "Existen dos lineas con el mismo nombre \"" + nombre + "\" para la marca \""+marca.nombre+"\".";
         } else if (consulta.isEmpty()) {

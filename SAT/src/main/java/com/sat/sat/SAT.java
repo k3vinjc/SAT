@@ -65,12 +65,13 @@ public class SAT {
         String salida = "";
         boolean error = false;
         String txt_error = "";
+        DB db= new DB();
         if (monto_Compra < 0 || id_Transferencia < 0) {
             error = true;
             txt_error = "El monto y código de transferencia deben ser de valor positivo.";
-        } else if (DB.insert("monto", "transferencia", "" + monto_Compra)) {
+        } else if (!db.insert("monto", "transferencia", id_Transferencia+"," + monto_Compra)) {
             error = true;
-            txt_error = "Error de ejecución de insercion de transferencia.";
+            txt_error = "Error de ejecución de insercion de transferencia.\nSQL error: "+db.getError();
         }
         salida = "{\n"
                 + "\"status\" : " + (error ? 1 : 0) + ",\n"
