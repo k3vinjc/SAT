@@ -37,12 +37,10 @@ static public ArrayList select(String campos, String tablas, String condiciones)
         Connection con;
 	try{
                 if((con=getConnection())==null)return null;
-		st = con.createStatement();
-		rs = st.executeQuery("select " + campos + " from " + tablas + (condiciones.isEmpty()?"":("where "+condiciones+";")));
+		st = con.createStatement();//"max(cod_manifiesto) as codman", "manifiesto", ""
+		rs = st.executeQuery("select " + campos + " from " + tablas + (condiciones.trim().isEmpty()? "":("where "+condiciones))+";");
                 al=new ArrayList();
 		while(rs.next()){
-			//rs.getInt("nombre_campoINT");
-			//rs.getString("campoString");
                         al.add(rs.toString());
 		}
 	}catch(SQLException ex){

@@ -89,9 +89,11 @@ public class Declaracion {
         return this.cod_declaracion == 0 ? "Error" : this.marca.nombre + " " + this.linea.nombre + " " + this.fecha_declaracion;
     }
 
+    /*
+        El formato de fecha debe ser yyyy-mm-dd
+    */
     private boolean validarFormatoFecha() {
         String split[] = this.fecha_declaracion.split("-");
-        String tipo[] = {"dia", "mes", "año"};
         String string = "";
         if (split.length != 3) {
             return false;
@@ -101,7 +103,7 @@ public class Declaracion {
                 string = split[i];
                 int entero = Integer.parseInt(string);
                 switch (i) {
-                    case 0://DIA
+                    case 2://DIA
                         if (entero > 31 || entero < 1) {
                             txt_error = "El número de día es incorrecto: \"" + entero + "\"";
                             return false;
@@ -113,9 +115,9 @@ public class Declaracion {
                             return false;
                         }
                         break;
-                    case 2:
+                    case 0:
                         if (entero > 3000 || entero < 1900) {
-                            txt_error = "El número de mes es no es verídico: \"" + entero + "\"";
+                            txt_error = "El número de año es no es verídico: \"" + entero + "\"";
                             return false;
                         }
                         break;
@@ -125,7 +127,7 @@ public class Declaracion {
                 }
             }
         } catch (NumberFormatException nfe) {
-            txt_error = "Formato del número de " + string + "\" es incorrecto";
+            txt_error = "Formato del número de " + string + "\" es incorrecto. Debe ser: yyyy-mm-dd.";
             return false;
         }
         return true;
