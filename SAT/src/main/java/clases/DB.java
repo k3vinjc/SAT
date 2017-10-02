@@ -80,7 +80,7 @@ public class DB {
         return false;
     }
 
-    public boolean update(String tabla, String sets, String condiciones) {
+    /*public boolean update(String tabla, String sets, String condiciones) {
         Statement st;
         Connection con;
         try {
@@ -98,7 +98,7 @@ public class DB {
             error=true;
         }
         return false;
-    }
+    }*/
 
     public boolean delete(String tablas, String condiciones) {
         Statement st;

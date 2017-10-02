@@ -56,7 +56,7 @@ public class SAT {
         }
 
         String salida = "{\n"
-                + "\"valor\" : " + (error ? -1 : String.valueOf(l.factor)) + ",\n"
+                + "\"valor\" : " + (error ? -1 : String.valueOf(getCosto(l.factor, modelo))) + ",\n"
                 + "\"status\" : " + (error ? 1 : 0) + ",\n"
                 + "\"descripcion\" : \"" + (error ? txt_error : "Calculo exitoso") + "\"\n"
                 + "}";
