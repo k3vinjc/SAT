@@ -5,8 +5,10 @@
  */
 package clases;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -21,13 +23,13 @@ import static org.junit.Assert.*;
 public class DBTest {
 
     private final String TABLA = "prueba";
-    private final String CAMPOS = "atr1,atr2,atr3";
+    private final String CAMPOS = "atr1,atr2,atr3,atr4";
     private final Calendar TIEMPO = Calendar.getInstance();
-    private final String VALORES = "5,'prueba','"
+    private final String VALORES = "5,2.5,'prueba','"
             + TIEMPO.get(Calendar.YEAR) + "-"
             + TIEMPO.get(Calendar.MONTH) + "-"
             + TIEMPO.get(Calendar.DAY_OF_MONTH) + "'";
-    private final int[] TIPOS = {INT, STRING, STRING};
+    private final int[] TIPOS = {INT, DOUBLE, STRING, DATE};
 
     private static final byte INT = 0;
     private static final byte DOUBLE = 1;
@@ -35,6 +37,12 @@ public class DBTest {
     private static final byte DATE = 3;
     private static final String[] DEF_TIPOS = {"entero", "decimal", "cadena", "fecha"};
 
+    /*create table prueba(
+	atr1 int not null,
+	atr2 decimal(6,2) not null,
+	atr3 varchar(30) not null,
+	atr4 date
+    );*/
     public DBTest() {
 
     }
@@ -83,27 +91,33 @@ public class DBTest {
             for (int i = 0; i < result.size(); i++) {
                 Object objeto = result.get(i);
                 boolean interno = false;
+                String campo = CAMPOS.split(",")[i];
                 try {
                     switch (TIPOS[i]) {
                         case INT:
-                            int intResultado = (int) objeto;
+                            int intResultado = ((java.sql.ResultSet) objeto).getInt(campo);
                             interno = true;
-                            int intEsperado = Integer.parseInt(CAMPOS.split(",")[i]);
+                            int intEsperado = Integer.parseInt(campo);
                             assertEquals(intResultado, intEsperado);
                             break;
                         case DOUBLE:
-                            double doubleResultado = (double) objeto;
+                            double doubleResultado = ((java.sql.ResultSet) objeto).getDouble(campo);
                             interno = true;
-                            double doubleEsperado = Double.parseDouble(CAMPOS.split(",")[i]);
+                            double doubleEsperado = Double.parseDouble(campo);
                             assertEquals(doubleResultado, doubleEsperado, 0.01);
                             break;
                         case STRING:
-                        case DATE:
-                            String stringResultado = objeto.toString();
+                            String stringResultado = ((java.sql.ResultSet) objeto).getString(campo);
                             interno = true;
-                            String stringEsperado = (CAMPOS.split(",")[i]);
+                            String stringEsperado = (campo);
                             stringEsperado = stringEsperado.substring(1, stringEsperado.length() - 1);//SE HACE ESTO PORQUE TIENE LA COMILLA SIMPLE AL INICIO Y AL FINAL-> '
                             assertTrue(stringEsperado.equals(stringResultado));
+                            break;
+                        case DATE:
+                            Date dateResultado = ((java.sql.ResultSet) objeto).getDate(campo);
+                            interno = true;
+                            Date dateEsperado = TIEMPO.getTime();
+                            assertTrue(dateEsperado.equals(dateResultado));
                             break;
                     }
                 } catch (NumberFormatException ex) {
@@ -112,6 +126,8 @@ public class DBTest {
                     } else {
                         fail("DB.select: No coincide el resultado obtenido con el ingresado. Obtenido: " + String.valueOf(objeto) + ". Esperado: " + CAMPOS.split(",")[i]);
                     }
+                } catch (SQLException ex) {
+                    fail("DB.select: No se encontró el campo: " + campo + " en el resultado de la consulta.");
                 }
             }
         }
@@ -141,7 +157,7 @@ public class DBTest {
     public void testDelete() {
         System.out.println("delete");
         String tablas = "";
-        
+
         String atributos[] = CAMPOS.split(",");
         String valores[] = VALORES.split(",");
         String condiciones = "";
@@ -157,32 +173,6 @@ public class DBTest {
         } else {
             fail(db.getError());
         }
-    }
-
-    /**
-     * Test of hasError method, of class DB.
-     * @param db
-     */
-    @Test
-    public void testHasError(DB db) {
-        System.out.println("hasError");
-        if(db.getError().equals("")){
-            fail("El error está vacío, cuando debe especificar el por qué del error");
-        }
-    }
-
-    /**
-     * Test of getError method, of class DB.
-     */
-    @Test
-    public void testGetError() {
-        System.out.println("getError");
-        DB instance = new DB();
-        String expResult = "";
-        String result = instance.getError();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
 }
