@@ -5,6 +5,8 @@
  */
 package clases;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author kevinj
@@ -26,13 +28,13 @@ public class Declaracion {
             txt_error = "El modelo debe ser un año verídico; se proporcionó \"" + modelo + "\"";
         } else if (precio < 0) {
             txt_error = "El precio debe ser un valor positivo; se proporcionó \"" + modelo + "\"";
-        }else
-        {
+        } else {
             this.modelo = modelo;
             this.fecha_declaracion = fecha_declaracion.trim();
-            validarMarcaLinea(marca, linea);
-            txt_error = "";
-            this.cod_declaracion=crearDeclaracion();
+            if (validarMarcaLinea(marca, linea)) {
+                txt_error = "";
+                this.cod_declaracion = crearDeclaracion();
+            }
         }
     }
 
@@ -58,14 +60,12 @@ public class Declaracion {
         if (!validarFormatoFecha()) {
             return 0;
         }
-        DB db=new DB();
-        java.util.ArrayList consulta;
-        if (!db.insert("marca, linea, modelo, fecha_declaracion, precio",
-                "declaracion", 
-                marca.cod_marca + "," + linea.cod_linea + "," + modelo + ",'" + fecha_declaracion + "'," + precio)) {
-            txt_error = "No se pudo agregar el manifiesto con los datos: \nMarca: " + marca.cod_marca + "\nLinea: " + linea.cod_linea + "\nModelo: " + modelo + "\nFecha:'" + fecha_declaracion + "'\nPrecio: " + precio+".\nSQL: "+db.getError();
+        DB db = new DB();
+        ArrayList consulta;
+        if (!db.insert("marca, linea, modelo, fecha_declaracion, precio", "declaracion", marca.cod_marca + "," + linea.cod_linea + "," + modelo + ",'" + fecha_declaracion + "'," + precio)) {
+            txt_error = "No se pudo agregar el manifiesto con los datos: \nMarca: " + marca.cod_marca + "\nLinea: " + linea.cod_linea + "\nModelo: " + modelo + "\nFecha:'" + fecha_declaracion + "'\nPrecio: " + precio + ".\nSQL: " + db.getError();
         } else if ((consulta = db.select("max(cod_manifiesto) as codman", "manifiesto", "")) == null) {
-            txt_error = "Error de ejecución de consulta de manifiesto después de crearlo."+"\nSQL: "+db.getError();
+            txt_error = "Error de ejecución de consulta de manifiesto después de crearlo." + "\nSQL: " + db.getError();
         } else if (consulta.isEmpty()) {
             txt_error = "No se creó el manifiesto con los datos: \nMarca: " + marca.cod_marca + "\nLinea: " + linea.cod_linea + "\nModelo: " + modelo + "\nFecha:'" + fecha_declaracion + "'\nPrecio: " + precio;
         } else {
@@ -73,7 +73,7 @@ public class Declaracion {
                 cod_declaracion = ((java.sql.ResultSet) (consulta.get(0))).getInt("codman");
                 return cod_declaracion;
             } catch (Exception ex) {
-                txt_error = "Campo \"codman\" incorrecto en consulta posterior a supuesta creación de Manifiesto. Error: "+ex.getMessage();
+                txt_error = "Campo \"codman\" incorrecto en consulta posterior a supuesta creación de Manifiesto. Error: " + ex.getMessage();
                 ex.printStackTrace();
             }
         }
@@ -91,7 +91,7 @@ public class Declaracion {
 
     /*
         El formato de fecha debe ser yyyy-mm-dd
-    */
+     */
     private boolean validarFormatoFecha() {
         String split[] = this.fecha_declaracion.split("-");
         String string = "";

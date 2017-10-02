@@ -11,6 +11,9 @@ import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import clases.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *
@@ -69,7 +72,7 @@ public class SAT {
         if (monto_Compra < 0 || id_Transferencia < 0) {
             error = true;
             txt_error = "El monto y código de transferencia deben ser de valor positivo.";
-        } else if (!db.insert("monto", "transferencia", id_Transferencia+"," + monto_Compra)) {
+        } else if (!db.insert("cod_transferencia,monto", "transferencia", id_Transferencia+"," + monto_Compra)) {
             error = true;
             txt_error = "Error de ejecución de insercion de transferencia.\nSQL error: "+db.getError();
         }
@@ -84,7 +87,11 @@ public class SAT {
         formato fecha_entrada: dd-mm-yyyy. Ejemplo: 28-02-2017
      */
     @WebMethod(operationName = "guardar_Manifiesto")
-    public String guardar_Manifiesto(@WebParam(name = "marca") String marca, @WebParam(name = "linea") String linea, @WebParam(name = "modelo") int modelo, @WebParam(name = "fecha_Entrada") String fecha_Entrada, @WebParam(name = "pais_Origen") String pais_Origen) {
+    public String guardar_Manifiesto(@WebParam(name = "marca") String marca, 
+            @WebParam(name = "linea") String linea, 
+            @WebParam(name = "modelo") int modelo, 
+            @WebParam(name = "fecha_Entrada") String fecha_Entrada, 
+            @WebParam(name = "pais_Origen") String pais_Origen) {
         String salida, txt_error = "";
         Manifiesto mn=null;
         boolean error=false;
@@ -114,20 +121,21 @@ public class SAT {
     @WebMethod(operationName = "guardar_Declaracion")
     public String guardar_Declaracion(@WebParam(name = "marca") String marca,
             @WebParam(name = "linea") String linea,
+            @WebParam(name = "fecha_declaracion") String fecha_declaracion,
             @WebParam(name = "modelo") int modelo,
-            @WebParam(name = "precio") double precio,
-            @WebParam(name = "fecha_declaracion") String fecha_declaracion
+            @WebParam(name = "precio") double precio
     ) {
-        String Salida = "";
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        String fecha = fecha_declaracion;//df.format(fecha_declaracion);
         boolean error = true;
         String txt_error = "", salida="";
         Declaracion d=null;
 
-        if (marca.isEmpty() || linea.isEmpty() || fecha_declaracion.isEmpty()) {
+        if (marca.isEmpty() || linea.isEmpty() || fecha.isEmpty()) {
             txt_error = "El parámetro \"marca\", \"linea\" o \"fecha de declaración\" vienen vacíos.";
         } else if (modelo < 0 || precio < 0) {
             txt_error = "El modelo y precio de transferencia deben ser de valor positivo.";
-        } else if((d=new Declaracion(marca, linea, modelo, precio, fecha_declaracion)).cod_declaracion==0){
+        } else if((d=new Declaracion(marca, linea, modelo, precio, fecha)).cod_declaracion==0){
             txt_error=d.getError();
         }
 

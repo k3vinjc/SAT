@@ -17,17 +17,20 @@ public class DB {
     public final boolean INT = true;
     public final boolean DOUBLE = true;
     private final String JDBC_DRIVER = "org.mariadb.jdbc.Driver";
-    private final String DB_URL = "jdbc:mariadb://www.sat.com/sat";
+    private final String DB_URL = "jdbc:mysql://www.sat.com:3306/sat";
     private final String USER = "root";
     private final String PASS = "52525";
     private String txt_error = "";
     private boolean error = false;
 
     private Connection getConnection() {
-        Connection con = null;
+            Connection con = null;
         try {
+            Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection(DB_URL, USER, PASS);
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException ex) {
+            error=true;
+            txt_error=ex.getMessage();
             return null;
         }
         return con;
@@ -48,7 +51,8 @@ public class DB {
             while (rs.next()) {
                 al.add(rs.toString());
             }
-        } catch (SQLException ex) {
+            con.close();
+        } catch (Exception ex) {
             //ex.printStackTrace();
             txt_error=ex.getMessage();
             error=true;
@@ -64,11 +68,12 @@ public class DB {
                 return false;
             }
             st = con.createStatement();
-            if (st.executeUpdate("insert into " + tablas + "(" + campos + ") values (" + campos + ");") >= 1) {
+            if (st.executeUpdate("insert into " + tablas + "(" + campos + ") values (" + valores + ");") >= 1) {
                 return true;
             }
+            con.close();
         } catch (SQLException ex) {
-            //ex.printStackTrace();
+            ex.printStackTrace();
             txt_error=ex.getMessage();
             error=true;
         }
@@ -86,6 +91,7 @@ public class DB {
             if (st.executeUpdate("update " + tabla + " set " + sets + " where " + condiciones + ";") >= 1) {
                 return true;
             }
+            con.close();
         } catch (SQLException ex) {
             //ex.printStackTrace();
             txt_error=ex.getMessage();
@@ -105,6 +111,7 @@ public class DB {
             if (st.executeUpdate("delete from " + tablas + "where " + condiciones + ";") >= 1) {
                 return true;
             }
+            con.close();
         } catch (SQLException ex) {
             //ex.printStackTrace();
             txt_error=ex.getMessage();
