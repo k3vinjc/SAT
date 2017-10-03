@@ -25,9 +25,9 @@ public class Marca {
         retorno 0: Error
      */
     private boolean buscarMarca(String nombre) {
-        java.util.ArrayList consulta;
+        java.util.ArrayList<Object[]> consulta;
         DB db=new DB();
-        if ((consulta = db.select("cod_marca", "marca", "nombre = '" + nombre + "'")) == null) {
+        if ((consulta = db.select("cod_marca", "marca", "nombre = '" + nombre + "'",new int[]{DB.INT})) == null) {
             txt_error = "Error de ejecución de consulta de marca \""+nombre+"\".\n SQL Error: "+db.getError();
             return false;
         } else if (consulta.size() > 1) {
@@ -38,22 +38,21 @@ public class Marca {
             return (this.cod_marca=crearMarca(nombre))!=0;
         }else{
             try {
-                cod_marca = ((java.sql.ResultSet) (consulta.get(0))).getInt("cod_marca");
+                cod_marca =(int)(consulta.get(0))[0];
                 return cod_marca!=0;
             } catch (Exception ex) {
                 txt_error = "Campo \"cod_marca\" incorrecto o no encontrado en consulta posterior a supuesta creación.";
-                ex.printStackTrace();
             }
         }
         return false;
     }
 
     private int crearMarca(String nombre) {
-        java.util.ArrayList consulta;
+        java.util.ArrayList<Object[]> consulta;
         DB db=new DB();
         if (!db.insert("nombre", "marca", "'" + nombre + "'")) {
             txt_error = "No se pudo agregar la marca \"" + nombre + "\""+".\nSQL: "+db.getError();
-        } else if ((consulta = db.select("cod_marca", "marca", "nombre = '" + nombre + "'")) == null) {
+        } else if ((consulta = db.select("cod_marca", "marca", "nombre = '" + nombre + "'",new int[]{DB.INT})) == null) {
             txt_error = "Error de ejecución de consulta de marca posterior"+".\nSQL: "+db.getError();
         } else if (consulta.size() > 1) {
             txt_error = "Existen dos marcas con el mismo nombre.";
@@ -61,10 +60,9 @@ public class Marca {
             txt_error = "No se creó la marca " + nombre + ".";
         } else {
             try {
-                return ((java.sql.ResultSet) (consulta.get(0))).getInt("cod_marca");
+                return (int) (consulta.get(0))[0];
             } catch (Exception ex) {
                 txt_error = "Campo \"cod_marca\" incorrecto o no encontrado en consulta posterior a supuesta creación de Marca.";
-                ex.printStackTrace();
             }
         }
         return 0;

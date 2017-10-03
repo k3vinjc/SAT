@@ -29,13 +29,9 @@ public class DBTest {
             + TIEMPO.get(Calendar.YEAR) + "-"
             + TIEMPO.get(Calendar.MONTH) + "-"
             + TIEMPO.get(Calendar.DAY_OF_MONTH) + "'";
-    private final int[] TIPOS = {INT, DOUBLE, STRING, DATE};
+    private final int[] TIPOS = {DB.INT, DB.DOUBLE, DB.STRING, DB.DATE};
 
-    private static final byte INT = 0;
-    private static final byte DOUBLE = 1;
-    private static final byte STRING = 2;
-    private static final byte DATE = 3;
-    private static final String[] DEF_TIPOS = {"entero", "decimal", "cadena", "fecha"};
+
 
     /*create table prueba(
 	atr1 int not null,
@@ -69,8 +65,6 @@ public class DBTest {
     @Test
     public void testSelect() {
         System.out.println("select");
-        String campos = CAMPOS;
-        String tablas = TABLA;
 
         String atributos[] = CAMPOS.split(",");
         String valores[] = VALORES.split(",");
@@ -82,55 +76,46 @@ public class DBTest {
             }
         }
         DB db = new DB();
-        ArrayList result = db.select(campos, tablas, condiciones);
+        ArrayList result = db.select(CAMPOS, TABLA, condiciones,TIPOS);
         if (result == null) {
             fail(db.getError());
         } else if (result.isEmpty()) {
             fail("DB.select: Devolvió resultado vacío.");
         } else {
-            for (int i = 0; i < result.size(); i++) {
-                Object objeto = result.get(i);
-                boolean interno = false;
-                String campo = CAMPOS.split(",")[i];
+            Object objeto = result.get(0);
+            String[] campos=CAMPOS.split(",");
+            for (int i = 0; i < TIPOS.length; i++) {
+                String campo = campos[i];
                 try {
                     switch (TIPOS[i]) {
-                        case INT:
-                            int intResultado = ((java.sql.ResultSet) objeto).getInt(campo);
-                            interno = true;
+                        case DB.INT:
+                            int intResultado = (int)(((java.sql.ResultSet) objeto).getObject(i+1));
                             int intEsperado = Integer.parseInt(campo);
                             assertEquals(intResultado, intEsperado);
                             break;
-                        case DOUBLE:
-                            double doubleResultado = ((java.sql.ResultSet) objeto).getDouble(campo);
-                            interno = true;
+                        case DB.DOUBLE:
+                            double doubleResultado = ((java.sql.ResultSet) objeto).getDouble(i+1);
                             double doubleEsperado = Double.parseDouble(campo);
                             assertEquals(doubleResultado, doubleEsperado, 0.01);
                             break;
-                        case STRING:
-                            String stringResultado = ((java.sql.ResultSet) objeto).getString(campo);
-                            interno = true;
+                        case DB.STRING:
+                            String stringResultado = ((java.sql.ResultSet) objeto).getString(i+1);
                             String stringEsperado = (campo);
                             stringEsperado = stringEsperado.substring(1, stringEsperado.length() - 1);//SE HACE ESTO PORQUE TIENE LA COMILLA SIMPLE AL INICIO Y AL FINAL-> '
                             assertTrue(stringEsperado.equals(stringResultado));
                             break;
-                        case DATE:
-                            Date dateResultado = ((java.sql.ResultSet) objeto).getDate(campo);
-                            interno = true;
+                        case DB.DATE:
+                            Date dateResultado = ((java.sql.ResultSet) objeto).getDate(i+1);
                             Date dateEsperado = TIEMPO.getTime();
                             assertTrue(dateEsperado.equals(dateResultado));
                             break;
-                    }
-                } catch (NumberFormatException ex) {
-                    if (interno) {
-                        fail("DB.select: El tipo de dato " + DEF_TIPOS[TIPOS[i]] + " no es el indicado para el campo \"" + CAMPOS.split(",")[i] + "\"");
-                    } else {
-                        fail("DB.select: No coincide el resultado obtenido con el ingresado. Obtenido: " + String.valueOf(objeto) + ". Esperado: " + CAMPOS.split(",")[i]);
                     }
                 } catch (SQLException ex) {
                     fail("DB.select: No se encontró el campo: " + campo + " en el resultado de la consulta.");
                 }
             }
         }
+        db.closeConnection();
     }
 
     /**
@@ -148,6 +133,7 @@ public class DBTest {
         } else {
             fail(db.getError());
         }
+        db.closeConnection();
     }
 
     /**
@@ -156,7 +142,7 @@ public class DBTest {
     @Test
     public void testDelete() {
         System.out.println("delete");
-        String tablas = "";
+        String tablas = TABLA;
 
         String atributos[] = CAMPOS.split(",");
         String valores[] = VALORES.split(",");
@@ -173,6 +159,7 @@ public class DBTest {
         } else {
             fail(db.getError());
         }
+        db.closeConnection();
     }
 
 }
