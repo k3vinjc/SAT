@@ -5,7 +5,6 @@
  */
 package clases;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,11 +26,9 @@ public class DBTest {
     private final Calendar TIEMPO = Calendar.getInstance();
     private final String VALORES = "5,2.5,'prueba','"
             + TIEMPO.get(Calendar.YEAR) + "-"
-            + TIEMPO.get(Calendar.MONTH) + "-"
+            + (TIEMPO.get(Calendar.MONTH) + 1) + "-"
             + TIEMPO.get(Calendar.DAY_OF_MONTH) + "'";
     private final int[] TIPOS = {DB.INT, DB.DOUBLE, DB.STRING, DB.DATE};
-
-
 
     /*create table prueba(
 	atr1 int not null,
@@ -59,6 +56,34 @@ public class DBTest {
     public void tearDown() {
     }
 
+    @Test
+    public void testDelete() {
+        System.out.println("delete");
+        String tablas = TABLA;
+
+        String atributos[] = CAMPOS.split(",");
+        String valores[] = VALORES.split(",");
+        String condiciones = "";
+
+        for (int i = 0; i < valores.length; i++) {
+            condiciones += atributos[i] + "=" + valores[i] + " ";
+            if (i < (valores.length - 1)) {
+                condiciones += "and ";
+            }
+        }
+        DB db = new DB();
+        if (db.insert(CAMPOS, TABLA, VALORES)) {
+            if (db.delete(tablas, condiciones)) {
+                assertTrue(true);
+            } else {
+                fail(db.getError());
+            }
+        } else {
+            fail("DB.delete: No se pudo insertar el registro a eliminar.");
+        }
+        db.closeConnection();
+    }
+
     /**
      * Test of select method, of class DB.
      */
@@ -76,42 +101,48 @@ public class DBTest {
             }
         }
         DB db = new DB();
-        ArrayList result = db.select(CAMPOS, TABLA, condiciones,TIPOS);
+        ArrayList<Object[]> result = db.select(CAMPOS, TABLA, condiciones, TIPOS);
         if (result == null) {
             fail(db.getError());
         } else if (result.isEmpty()) {
             fail("DB.select: Devolvió resultado vacío.");
         } else {
-            Object objeto = result.get(0);
-            String[] campos=CAMPOS.split(",");
-            for (int i = 0; i < TIPOS.length; i++) {
-                String campo = campos[i];
-                try {
+            String[] esperados = valores;
+            for (Object[] registro : result) {
+                for (int i = 0; i < registro.length; i++) {
+                    Object campo = registro[i];
+                    String esperado = esperados[i];
                     switch (TIPOS[i]) {
                         case DB.INT:
-                            int intResultado = (int)(((java.sql.ResultSet) objeto).getObject(i+1));
-                            int intEsperado = Integer.parseInt(campo);
+                            int intResultado = (int) (campo);
+                            int intEsperado = Integer.parseInt(esperado);
                             assertEquals(intResultado, intEsperado);
                             break;
                         case DB.DOUBLE:
-                            double doubleResultado = ((java.sql.ResultSet) objeto).getDouble(i+1);
-                            double doubleEsperado = Double.parseDouble(campo);
+                            double doubleResultado = (double) campo;
+                            double doubleEsperado = Double.parseDouble(esperado);
                             assertEquals(doubleResultado, doubleEsperado, 0.01);
                             break;
                         case DB.STRING:
-                            String stringResultado = ((java.sql.ResultSet) objeto).getString(i+1);
-                            String stringEsperado = (campo);
-                            stringEsperado = stringEsperado.substring(1, stringEsperado.length() - 1);//SE HACE ESTO PORQUE TIENE LA COMILLA SIMPLE AL INICIO Y AL FINAL-> '
+                            String stringResultado = String.valueOf(campo);
+                            String stringEsperado = esperado.substring(1, esperado.length() - 1);//SE HACE ESTO PORQUE TIENE LA COMILLA SIMPLE AL INICIO Y AL FINAL-> '
                             assertTrue(stringEsperado.equals(stringResultado));
                             break;
                         case DB.DATE:
-                            Date dateResultado = ((java.sql.ResultSet) objeto).getDate(i+1);
+                            Date dateResultado = (Date) campo;
                             Date dateEsperado = TIEMPO.getTime();
-                            assertTrue(dateEsperado.equals(dateResultado));
+                            String txt_resultado = dateResultado.toString();
+                            int mes,
+                             dia;
+                            mes = (TIEMPO.get(Calendar.MONTH) + 1);
+                            dia = TIEMPO.get(Calendar.DAY_OF_MONTH);
+                            String txt_esperado = +TIEMPO.get(Calendar.YEAR) + "-"
+                                    + (mes<10? "0"+mes:""+mes) +"-"
+                                    + (dia<10? "0"+dia:""+dia);
+                            assertTrue(txt_esperado.equals(txt_resultado));
+                            //assertTrue(dateEsperado.equals(dateResultado));
                             break;
                     }
-                } catch (SQLException ex) {
-                    fail("DB.select: No se encontró el campo: " + campo + " en el resultado de la consulta.");
                 }
             }
         }
@@ -139,27 +170,4 @@ public class DBTest {
     /**
      * Test of delete method, of class DB.
      */
-    @Test
-    public void testDelete() {
-        System.out.println("delete");
-        String tablas = TABLA;
-
-        String atributos[] = CAMPOS.split(",");
-        String valores[] = VALORES.split(",");
-        String condiciones = "";
-        for (int i = 0; i < valores.length; i++) {
-            condiciones += atributos[i] + "=" + valores[i] + " ";
-            if (i < (valores.length - 1)) {
-                condiciones += "and ";
-            }
-        }
-        DB db = new DB();
-        if (db.delete(tablas, condiciones)) {
-            assertTrue(true);
-        } else {
-            fail(db.getError());
-        }
-        db.closeConnection();
-    }
-
 }

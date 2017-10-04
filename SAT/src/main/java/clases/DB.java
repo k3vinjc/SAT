@@ -20,7 +20,7 @@ public class DB {
     public static final byte DATE = 3;
     public static final String[] DEF_TIPOS = {"entero", "decimal", "cadena", "fecha"};
 
-    private static final String JDBC_DRIVER = "org.mysql.jdbc.Driver";
+    private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";//com.mysql.jdbc.Driver
     private static final String DB_URL = "jdbc:mysql://www.sat.com:3306/sat";
     private static final String USER = "root";
     private static final String PASS = "52525";
@@ -47,7 +47,6 @@ public class DB {
                 con.close();
             }
         } catch (SQLException ex) {
-            
         }
     }
 
@@ -83,7 +82,7 @@ public class DB {
                 }
                 registros.add(valores);
             }
-        } catch (Exception ex) {
+        } catch (SQLException ex) {
             //ex.printStackTrace();
             txt_error = ex.getMessage();
             error = true;
@@ -102,7 +101,6 @@ public class DB {
                 return true;
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
             txt_error = ex.getMessage();
             error = true;
         }
