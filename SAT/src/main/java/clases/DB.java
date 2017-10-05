@@ -35,7 +35,7 @@ public class DB {
             con = DriverManager.getConnection(DB_URL, USER, PASS);
         } catch (SQLException | ClassNotFoundException ex) {
             error = true;
-            txt_error = ex.getMessage();
+            txt_error = "Error de conexion a la BD: "+ex.getMessage();
             return null;
         }
         return con;

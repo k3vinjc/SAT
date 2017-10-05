@@ -26,7 +26,9 @@ public class Manifiesto {
         this.modelo = modelo;
         this.fecha_entrada = fecha_entrada.trim();
         this.pais_origen = pais_origen.trim();
-        validarMarcaLinea(marca, linea);
+        if(validarMarcaLinea(marca, linea)){
+            this.cod_manifiesto=crearManifiesto();
+        }
     }
 
     private boolean validarMarcaLinea(String marca, String linea) {

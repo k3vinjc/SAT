@@ -23,7 +23,7 @@ public class SAT {
 
     private double getCosto(double factor, int modelo) {
         //Precio(“Marca, Linea”)+(1000/(AñoActual-Modelo+1))+200
-        return factor + (1000 / (java.util.Calendar.getInstance().get(java.util.Calendar.YEAR) - modelo)) + 200;
+        return ((double)((int) (((factor + (1000 / (java.util.Calendar.getInstance().get(java.util.Calendar.YEAR) - modelo)) + 200)) * 100))) / 100;
     }
 
     @WebMethod(operationName = "calcular_Impuesto_Sat")
@@ -31,7 +31,6 @@ public class SAT {
         boolean error = false;
         String txt_error = "";
         double costo = -1;
-        ArrayList costos;
         Linea l = null;
         Marca m = null;
 
@@ -53,13 +52,11 @@ public class SAT {
                 }
             }
         }
-
-        String salida = "{\n"
-                + "\"valor\" : " + (error ? -1 : String.valueOf(getCosto(l.factor, modelo))) + ",\n"
-                + "\"status\" : " + (error ? 1 : 0) + ",\n"
-                + "\"descripcion\" : \"" + (error ? txt_error : "Calculo exitoso") + "\"\n"
-                + "}";
-        return salida;
+        Json json = new Json();
+        json.addField("valor", (error ? -1 : getCosto(l.factor, modelo)), DB.DOUBLE);
+        json.addField("status", (error ? 1 : 0), DB.INT);
+        json.addField("descripcion", (error ? txt_error : "Calculo exitoso"), DB.STRING);
+        return json.toString();
     }
 
     @WebMethod(operationName = "registro_Id_Compra")
@@ -67,51 +64,47 @@ public class SAT {
         String salida = "";
         boolean error = false;
         String txt_error = "";
-        DB db= new DB();
+        DB db = new DB();
         if (monto_Compra < 0 || id_Transferencia < 0) {
             error = true;
             txt_error = "El monto y código de transferencia deben ser de valor positivo.";
-        } else if (!db.insert("cod_transferencia,monto", "transferencia", id_Transferencia+"," + monto_Compra)) {
+        } else if (!db.insert("cod_transferencia,monto", "transferencia", id_Transferencia + "," + monto_Compra)) {
             error = true;
-            txt_error = "Error de ejecución de insercion de transferencia.\nSQL error: "+db.getError();
+            txt_error = "Error de ejecución de insercion de transferencia.\nSQL error: " + db.getError();
         }
-        salida = "{\n"
-                + "\"status\" : " + (error ? 1 : 0) + ",\n"
-                + "\"descripcion\" : \"" + (error ? txt_error : "Registrado") + "\"\n"
-                + "}";
-        return salida;
+        Json json = new Json();
+        json.addField("status", (error ? 1 : 0), DB.INT);
+        json.addField("descripcion", (error ? txt_error : "Registrado"), DB.STRING);
+        return json.toString();
     }
 
     /*
         formato fecha_entrada: dd-mm-yyyy. Ejemplo: 28-02-2017
      */
     @WebMethod(operationName = "guardar_Manifiesto")
-    public String guardar_Manifiesto(@WebParam(name = "marca") String marca, 
-            @WebParam(name = "linea") String linea, 
-            @WebParam(name = "modelo") int modelo, 
-            @WebParam(name = "fecha_Entrada") String fecha_Entrada, 
+    public String guardar_Manifiesto(@WebParam(name = "marca") String marca,
+            @WebParam(name = "linea") String linea,
+            @WebParam(name = "modelo") int modelo,
+            @WebParam(name = "fecha_Entrada") String fecha_Entrada,
             @WebParam(name = "pais_Origen") String pais_Origen) {
         String salida, txt_error = "";
-        Manifiesto mn=null;
-        boolean error=false;
+        Manifiesto mn = null;
+        boolean error = false;
         if (marca.trim().isEmpty() || linea.trim().isEmpty() || pais_Origen.trim().isEmpty() || fecha_Entrada.trim().isEmpty()) {
             error = true;
             txt_error = "Los campos \"marca\", \"linea\", \"país de origen\" y \"fecha de entrada\" no deben estar vacíos.";
         } else if (modelo < 1900) {
             error = true;
             txt_error = "El modelo del automóvil debe tener un valor válido. Mayor al año 1900";
-        } else if((mn=new Manifiesto(marca, linea, modelo, fecha_Entrada, pais_Origen)).cod_manifiesto==0){
-            error=true;
-            txt_error=mn.getError();
+        } else if ((mn = new Manifiesto(marca, linea, modelo, fecha_Entrada, pais_Origen)).cod_manifiesto == 0) {
+            error = true;
+            txt_error = mn.getError();
         }
-
-        salida = "{\n"
-                + "\"num_Manifiesto\" : "+((error || mn==null)?"-1":mn.cod_manifiesto)+",\n"
-                + "\"status\":"+(error?1:0)+",\n"
-                + "\"descripcion\":\""+(error?txt_error:"Exitoso")+"\"\n"
-                + "}";
-
-        return salida;
+        Json json = new Json();
+        json.addField("num_Manifiesto", ((error || mn == null) ? -1 : mn.cod_manifiesto), DB.INT);
+        json.addField("status", (error ? 1 : 0), DB.INT);
+        json.addField("descripcion", (error ? txt_error : "Exitoso"), DB.STRING);
+        return json.toString();
     }
 
     /*
@@ -127,22 +120,22 @@ public class SAT {
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         String fecha = fecha_declaracion;//df.format(fecha_declaracion);
         boolean error = true;
-        String txt_error = "", salida="";
-        Declaracion d=null;
+        String txt_error = "", salida = "";
+        Declaracion d = null;
 
         if (marca.isEmpty() || linea.isEmpty() || fecha.isEmpty()) {
             txt_error = "El parámetro \"marca\", \"linea\" o \"fecha de declaración\" vienen vacíos.";
         } else if (modelo < 0 || precio < 0) {
             txt_error = "El modelo y precio de transferencia deben ser de valor positivo.";
-        } else if((d=new Declaracion(marca, linea, modelo, precio, fecha)).cod_declaracion==0){
-            txt_error=d.getError();
+        } else if ((d = new Declaracion(marca, linea, modelo, precio, fecha)).cod_declaracion == 0) {
+            txt_error = d.getError();
+        } else {
+            error = false;
         }
-
-        salida = "{\n"
-                + "\"num_Manifiesto\" : "+((error || d==null)?"-1":d.cod_declaracion)+",\n"
-                + "\"status\":"+(error?1:0)+",\n"
-                + "\"descripcion\":\""+(error?txt_error:"Exitoso")+"\"\n"
-                + "}";
-        return salida;
+        Json json = new Json();
+        json.addField("num_Declaracion", ((error || d == null) ? -1 : d.cod_declaracion), DB.INT);
+        json.addField("status", (error ? 1 : 0), DB.INT);
+        json.addField("descripcion", (error ? txt_error : "Exitoso"), DB.STRING);
+        return json.toString();
     }
 }

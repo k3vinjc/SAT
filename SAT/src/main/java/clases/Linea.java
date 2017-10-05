@@ -22,7 +22,8 @@ public class Linea {
     public Linea(String nombre, Marca marca) {
         txt_error = "";
         this.cod_linea=0;
-        this.nombre = nombre.toUpperCase().trim();
+        this.nombre = nombre.toLowerCase().trim();
+        this.marca=marca;
         buscarLinea(this.nombre);
     }
 

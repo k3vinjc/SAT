@@ -24,15 +24,16 @@ public class Declaracion {
 
     public Declaracion(String marca, String linea, int modelo, double precio, String fecha_declaracion) {
         this.cod_declaracion = 0;
+        txt_error = "";
         if (modelo < 1900) {
             txt_error = "El modelo debe ser un año verídico; se proporcionó \"" + modelo + "\"";
         } else if (precio < 0) {
             txt_error = "El precio debe ser un valor positivo; se proporcionó \"" + modelo + "\"";
         } else {
             this.modelo = modelo;
+            this.precio=precio;
             this.fecha_declaracion = fecha_declaracion.trim();
             if (validarMarcaLinea(marca, linea)) {
-                txt_error = "";
                 this.cod_declaracion = crearDeclaracion();
             }
         }
@@ -63,11 +64,11 @@ public class Declaracion {
         DB db = new DB();
         ArrayList<Object[]> consulta;
         if (!db.insert("marca, linea, modelo, fecha_declaracion, precio", "declaracion", marca.cod_marca + "," + linea.cod_linea + "," + modelo + ",'" + fecha_declaracion + "'," + precio)) {
-            txt_error = "No se pudo agregar el manifiesto con los datos: \nMarca: " + marca.cod_marca + "\nLinea: " + linea.cod_linea + "\nModelo: " + modelo + "\nFecha:'" + fecha_declaracion + "'\nPrecio: " + precio + ".\nSQL: " + db.getError();
-        } else if ((consulta = db.select("max(cod_manifiesto) as codman", "manifiesto", "",new int[]{DB.INT})) == null) {
-            txt_error = "Error de ejecución de consulta de manifiesto después de crearlo." + "\nSQL: " + db.getError();
+            txt_error = "No se pudo agregar la declaración con los datos: \nMarca: " + marca.cod_marca + "\nLinea: " + linea.cod_linea + "\nModelo: " + modelo + "\nFecha:'" + fecha_declaracion + "'\nPrecio: " + precio + ".\nSQL: " + db.getError();
+        } else if ((consulta = db.select("max(cod_declaracion) as coddec", "declaracion", "",new int[]{DB.INT})) == null) {
+            txt_error = "Error de ejecución de consulta de declaración después de crearlo." + "\nSQL: " + db.getError();
         } else if (consulta.isEmpty()) {
-            txt_error = "No se creó el manifiesto con los datos: \nMarca: " + marca.cod_marca + "\nLinea: " + linea.cod_linea + "\nModelo: " + modelo + "\nFecha:'" + fecha_declaracion + "'\nPrecio: " + precio;
+            txt_error = "No se creó la declaración con los datos: \nMarca: " + marca.cod_marca + "\nLinea: " + linea.cod_linea + "\nModelo: " + modelo + "\nFecha:'" + fecha_declaracion + "'\nPrecio: " + precio;
         } else {
             try {
                 cod_declaracion = (int)consulta.get(0)[0];
