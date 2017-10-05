@@ -137,7 +137,7 @@ public class SATTest {
         String linea = "hilux";
         String fecha_declaracion = "2017-10-25";
         int modelo = 2000;
-        double precio = ((int) (new java.util.Random()).nextDouble() * 50000) / 100;//La última operación es para volverlo de 2 dígitos decimales
+        double precio = ((double) ((int) (((new java.util.Random()).nextDouble()) * 50000))) / 100;//La última operación es para volverlo de 2 dígitos decimales
         SAT instance = new SAT();
         String result = instance.guardar_Declaracion(marca, linea, fecha_declaracion, modelo, precio);
 
