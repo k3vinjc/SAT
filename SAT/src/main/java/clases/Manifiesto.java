@@ -26,8 +26,8 @@ public class Manifiesto {
         this.modelo = modelo;
         this.fecha_entrada = fecha_entrada.trim();
         this.pais_origen = pais_origen.trim();
-        if(validarMarcaLinea(marca, linea)){
-            this.cod_manifiesto=crearManifiesto();
+        if (validarMarcaLinea(marca, linea)) {
+            this.cod_manifiesto = crearManifiesto();
         }
     }
 
@@ -53,20 +53,20 @@ public class Manifiesto {
         if (!validarFormatoFecha()) {
             return 0;
         }
-        DB db=new DB();
+        DB db = new DB();
         java.util.ArrayList<Object[]> consulta;
-        if (!db.insert("marca, linea, modelo, fecha_entrada, pais_origen", "manifiesto", marca.cod_marca+","+linea.cod_linea+","+modelo+",'"+fecha_entrada+"','"+pais_origen+"'")) {
-            txt_error = "No se pudo agregar el manifiesto con los datos: \nMarca: "+marca.cod_marca+"\nLinea: "+linea.cod_linea+"\nModelo: "+modelo+"\nFecha:'"+fecha_entrada+"'\nPais Origen:'"+pais_origen+"'"+".\nSQL: "+db.getError();
-        } else if ((consulta = db.select("max(cod_manifiesto) as codman", "manifiesto", "",new int[]{DB.INT})) == null) {
-            txt_error = "Error de ejecución de consulta de manifiesto después de crearlo"+".\nSQL: "+db.getError();
+        if (!db.insert("marca, linea, modelo, fecha_entrada, pais_origen", "manifiesto", marca.cod_marca + "," + linea.cod_linea + "," + modelo + ",'" + fecha_entrada + "','" + pais_origen + "'")) {
+            txt_error = "No se pudo agregar el manifiesto con los datos: \nMarca: " + marca.cod_marca + "\nLinea: " + linea.cod_linea + "\nModelo: " + modelo + "\nFecha:'" + fecha_entrada + "'\nPais Origen:'" + pais_origen + "'" + ".\nSQL: " + db.getError();
+        } else if ((consulta = db.select("max(cod_manifiesto) as codman", "manifiesto", "", new int[]{DB.INT})) == null) {
+            txt_error = "Error de ejecución de consulta de manifiesto después de crearlo" + ".\nSQL: " + db.getError();
         } else if (consulta.isEmpty()) {
-            txt_error = "No se creó la el manifiesto con los datos:  \nMarca: "+marca.cod_marca+"\nLinea: "+linea.cod_linea+"\nModelo: "+modelo+"\nFecha:'"+fecha_entrada+"'\nPais Origen:'"+pais_origen+"'";
+            txt_error = "No se creó la el manifiesto con los datos:  \nMarca: " + marca.cod_marca + "\nLinea: " + linea.cod_linea + "\nModelo: " + modelo + "\nFecha:'" + fecha_entrada + "'\nPais Origen:'" + pais_origen + "'";
         } else {
             try {
-                cod_manifiesto = (int)consulta.get(0)[0];
+                cod_manifiesto = (int) consulta.get(0)[0];
                 return cod_manifiesto;
             } catch (Exception ex) {
-                txt_error = "Campo \"cod_linea\" o \"factor\" incorrecto o no encontrado en consulta posterior a supuesta creación de Linea.\nError: "+ex.getMessage();
+                txt_error = "Campo \"cod_linea\" o \"factor\" incorrecto o no encontrado en consulta posterior a supuesta creación de Linea.\nError: " + ex.getMessage();
             }
         }
         return 0;
@@ -83,11 +83,13 @@ public class Manifiesto {
 
     /*
         El formato de fecha debe ser yyyy-mm-dd
-    */
+     */
     private boolean validarFormatoFecha() {
-        String split[] = this.fecha_entrada.split("-");
+        String split[] = this.fecha_entrada.split("/");
+        String fechaFormatoCorrecto = "";
         String string = "";
         if (split.length != 3) {
+            txt_error = "El formato correcto para la fecha es: dd/mm/yyy, por ejemplo: 28/02/2017";
             return false;
         }
         try {
@@ -95,31 +97,37 @@ public class Manifiesto {
                 string = split[i];
                 int entero = Integer.parseInt(string);
                 switch (i) {
-                    case 2://DIA
+                    case 0://DIA
                         if (entero > 31 || entero < 1) {
                             txt_error = "El número de día es incorrecto: \"" + entero + "\"";
                             return false;
+                        } else {
+                            fechaFormatoCorrecto = string;
                         }
                         break;
                     case 1:
                         if (entero > 12 || entero < 1) {
                             txt_error = "El número de mes es incorrecto: \"" + entero + "\"";
                             return false;
+                        } else {
+                            fechaFormatoCorrecto = string + "-" + fechaFormatoCorrecto;
                         }
                         break;
-                    case 0:
+                    case 2:
                         if (entero > 3000 || entero < 1900) {
                             txt_error = "El número de año es no es verídico: \"" + entero + "\"";
                             return false;
+                        } else {
+                            fechaFormatoCorrecto = string + "-" + fechaFormatoCorrecto;
                         }
                         break;
                     default:
                         break;
-
                 }
             }
+            this.fecha_entrada = fechaFormatoCorrecto;
         } catch (NumberFormatException nfe) {
-            txt_error = "Formato del número de " + string + "\" es incorrecto. Debe ser: yyyy-mm-dd.";
+            txt_error = "Formato del número de " + string + "\" es incorrecto. Debe ser: dd/mm/yyyy, por ejemplo: 28/02/2017";
             return false;
         }
         return true;

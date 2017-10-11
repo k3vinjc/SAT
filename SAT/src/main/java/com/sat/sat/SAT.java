@@ -117,17 +117,15 @@ public class SAT {
             @WebParam(name = "modelo") int modelo,
             @WebParam(name = "precio") double precio
     ) {
-        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-        String fecha = fecha_declaracion;//df.format(fecha_declaracion);
         boolean error = true;
-        String txt_error = "", salida = "";
+        String txt_error = "";
         Declaracion d = null;
 
-        if (marca.isEmpty() || linea.isEmpty() || fecha.isEmpty()) {
+        if (marca.isEmpty() || linea.isEmpty() || fecha_declaracion.isEmpty()) {
             txt_error = "El parámetro \"marca\", \"linea\" o \"fecha de declaración\" vienen vacíos.";
         } else if (modelo < 0 || precio < 0) {
             txt_error = "El modelo y precio de transferencia deben ser de valor positivo.";
-        } else if ((d = new Declaracion(marca, linea, modelo, precio, fecha)).cod_declaracion == 0) {
+        } else if ((d = new Declaracion(marca, linea, modelo, precio, fecha_declaracion)).cod_declaracion == 0) {
             txt_error = d.getError();
         } else {
             error = false;

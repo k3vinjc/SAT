@@ -91,7 +91,7 @@ public class SATTest {
         String marca = "toyota";
         String linea = "hilux";
         int modelo = 2000;
-        String fecha_Entrada = "2017-10-25";
+        String fecha_Entrada = "25/10/2017";
         String pais_Origen = "Guatemala";
         SAT instance = new SAT();
         String result = instance.guardar_Manifiesto(marca, linea, modelo, fecha_Entrada, pais_Origen);
@@ -135,7 +135,7 @@ public class SATTest {
         System.out.println("guardar_Declaracion");
         String marca = "toyota";
         String linea = "hilux";
-        String fecha_declaracion = "2017-10-25";
+        String fecha_declaracion = "27/10/2017";
         int modelo = 2000;
         double precio = ((double) ((int) (((new java.util.Random()).nextDouble()) * 50000))) / 100;//La última operación es para volverlo de 2 dígitos decimales
         SAT instance = new SAT();
