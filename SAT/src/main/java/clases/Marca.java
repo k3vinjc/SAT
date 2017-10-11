@@ -28,10 +28,10 @@ public class Marca {
         java.util.ArrayList<Object[]> consulta;
         DB db=new DB();
         if ((consulta = db.select("cod_marca", "marca", "nombre = '" + nombre + "'",new int[]{DB.INT})) == null) {
-            txt_error = "Error de ejecución de consulta de marca \""+nombre+"\".\n SQL Error: "+db.getError();
+            txt_error = "Error de ejecución de consulta de marca '"+nombre+"'.\n SQL Error: "+db.getError();
             return false;
         } else if (consulta.size() > 1) {
-            txt_error = "Existen dos marcas con el mismo nombre \""+nombre+"\".";
+            txt_error = "Existen dos marcas con el mismo nombre '"+nombre+"'.";
             return false;
         } else if (consulta.isEmpty()) {
             //NO ENCONTRADO, SE CREA ENTONCES
@@ -41,7 +41,7 @@ public class Marca {
                 cod_marca =(int)(consulta.get(0))[0];
                 return cod_marca!=0;
             } catch (Exception ex) {
-                txt_error = "Campo \"cod_marca\" incorrecto o no encontrado en consulta posterior a supuesta creación.";
+                txt_error = "Campo 'cod_marca' incorrecto o no encontrado en consulta posterior a supuesta creación.";
             }
         }
         return false;
@@ -51,7 +51,7 @@ public class Marca {
         java.util.ArrayList<Object[]> consulta;
         DB db=new DB();
         if (!db.insert("nombre", "marca", "'" + nombre + "'")) {
-            txt_error = "No se pudo agregar la marca \"" + nombre + "\""+".\nSQL: "+db.getError();
+            txt_error = "No se pudo agregar la marca '" + nombre + "'"+".\nSQL: "+db.getError();
         } else if ((consulta = db.select("cod_marca", "marca", "nombre = '" + nombre + "'",new int[]{DB.INT})) == null) {
             txt_error = "Error de ejecución de consulta de marca posterior"+".\nSQL: "+db.getError();
         } else if (consulta.size() > 1) {
@@ -62,7 +62,7 @@ public class Marca {
             try {
                 return (int) (consulta.get(0))[0];
             } catch (Exception ex) {
-                txt_error = "Campo \"cod_marca\" incorrecto o no encontrado en consulta posterior a supuesta creación de Marca.";
+                txt_error = "Campo 'cod_marca' incorrecto o no encontrado en consulta posterior a supuesta creación de Marca.";
             }
         }
         return 0;

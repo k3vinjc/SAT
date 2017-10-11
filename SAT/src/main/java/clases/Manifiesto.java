@@ -66,7 +66,7 @@ public class Manifiesto {
                 cod_manifiesto = (int) consulta.get(0)[0];
                 return cod_manifiesto;
             } catch (Exception ex) {
-                txt_error = "Campo \"cod_linea\" o \"factor\" incorrecto o no encontrado en consulta posterior a supuesta creación de Linea.\nError: " + ex.getMessage();
+                txt_error = "Campo 'cod_linea' o 'factor' incorrecto o no encontrado en consulta posterior a supuesta creación de Linea.\nError: " + ex.getMessage();
             }
         }
         return 0;
@@ -99,7 +99,7 @@ public class Manifiesto {
                 switch (i) {
                     case 0://DIA
                         if (entero > 31 || entero < 1) {
-                            txt_error = "El número de día es incorrecto: \"" + entero + "\"";
+                            txt_error = "El número de día es incorrecto: '" + entero + "'";
                             return false;
                         } else {
                             fechaFormatoCorrecto = string;
@@ -107,7 +107,7 @@ public class Manifiesto {
                         break;
                     case 1:
                         if (entero > 12 || entero < 1) {
-                            txt_error = "El número de mes es incorrecto: \"" + entero + "\"";
+                            txt_error = "El número de mes es incorrecto: '" + entero + "'";
                             return false;
                         } else {
                             fechaFormatoCorrecto = string + "-" + fechaFormatoCorrecto;
@@ -115,7 +115,7 @@ public class Manifiesto {
                         break;
                     case 2:
                         if (entero > 3000 || entero < 1900) {
-                            txt_error = "El número de año es no es verídico: \"" + entero + "\"";
+                            txt_error = "El número de año es no es verídico: '" + entero + "'";
                             return false;
                         } else {
                             fechaFormatoCorrecto = string + "-" + fechaFormatoCorrecto;
@@ -127,7 +127,7 @@ public class Manifiesto {
             }
             this.fecha_entrada = fechaFormatoCorrecto;
         } catch (NumberFormatException nfe) {
-            txt_error = "Formato del número de " + string + "\" es incorrecto. Debe ser: dd/mm/yyyy, por ejemplo: 28/02/2017";
+            txt_error = "Formato del número de " + string + "' es incorrecto. Debe ser: dd/mm/yyyy, por ejemplo: 28/02/2017";
             return false;
         }
         return true;

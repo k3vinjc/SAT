@@ -26,9 +26,9 @@ public class Declaracion {
         this.cod_declaracion = 0;
         txt_error = "";
         if (modelo < 1900) {
-            txt_error = "El modelo debe ser un año verídico; se proporcionó \"" + modelo + "\"";
+            txt_error = "El modelo debe ser un año verídico; se proporcionó '" + modelo + "'";
         } else if (precio < 0) {
-            txt_error = "El precio debe ser un valor positivo; se proporcionó \"" + modelo + "\"";
+            txt_error = "El precio debe ser un valor positivo; se proporcionó '" + modelo + "'";
         } else {
             this.modelo = modelo;
             this.precio = precio;
@@ -74,7 +74,7 @@ public class Declaracion {
                 cod_declaracion = (int) consulta.get(0)[0];
                 return cod_declaracion;
             } catch (Exception ex) {
-                txt_error = "Campo \"codman\" incorrecto en consulta posterior a supuesta creación de Manifiesto. Error: " + ex.getMessage();
+                txt_error = "Campo 'codman' incorrecto en consulta posterior a supuesta creación de Manifiesto. Error: " + ex.getMessage();
             }
         }
         return 0;
@@ -107,7 +107,7 @@ public class Declaracion {
                 switch (i) {
                     case 0://DIA
                         if (entero > 31 || entero < 1) {
-                            txt_error = "El número de día es incorrecto: \"" + entero + "\"";
+                            txt_error = "El número de día es incorrecto: '" + entero + "'";
                             return false;
                         } else {
                             fechaFormatoCorrecto= string;
@@ -115,7 +115,7 @@ public class Declaracion {
                         break;
                     case 1:
                         if (entero > 12 || entero < 1) {
-                            txt_error = "El número de mes es incorrecto: \"" + entero + "\"";
+                            txt_error = "El número de mes es incorrecto: '" + entero + "'";
                             return false;
                         } else {
                             fechaFormatoCorrecto = string + "-" + fechaFormatoCorrecto;
@@ -123,7 +123,7 @@ public class Declaracion {
                         break;
                     case 2:
                         if (entero > 3000 || entero < 1900) {
-                            txt_error = "El número de año es no es verídico: \"" + entero + "\"";
+                            txt_error = "El número de año es no es verídico: '" + entero + "'";
                             return false;
                         } else {
                             fechaFormatoCorrecto = string + "-" + fechaFormatoCorrecto;
@@ -135,7 +135,7 @@ public class Declaracion {
             }
             this.fecha_declaracion=fechaFormatoCorrecto;
         } catch (NumberFormatException nfe) {
-            txt_error = "Formato del número de " + string + "\" es incorrecto. Debe ser: dd/mm/yyyy, por ejemplo: 28/02/2017";
+            txt_error = "Formato del número de " + string + "' es incorrecto. Debe ser: dd/mm/yyyy, por ejemplo: 28/02/2017";
             return false;
         }
         return true;

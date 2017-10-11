@@ -36,7 +36,7 @@ public class SAT {
 
         if (marca.isEmpty() || linea.isEmpty()) {
             error = true;
-            txt_error = "El parámetro \"marca\" o \"linea\" vienen vacíos.";
+            txt_error = "El parámetro 'marca' o 'linea' vienen vacíos.";
         } else {
             //ENCONTRANDO LA MARCA
             m = new Marca(marca);
@@ -92,7 +92,7 @@ public class SAT {
         boolean error = false;
         if (marca.trim().isEmpty() || linea.trim().isEmpty() || pais_Origen.trim().isEmpty() || fecha_Entrada.trim().isEmpty()) {
             error = true;
-            txt_error = "Los campos \"marca\", \"linea\", \"país de origen\" y \"fecha de entrada\" no deben estar vacíos.";
+            txt_error = "Los campos 'marca', 'linea', 'país de origen' y 'fecha de entrada' no deben estar vacíos.";
         } else if (modelo < 1900) {
             error = true;
             txt_error = "El modelo del automóvil debe tener un valor válido. Mayor al año 1900";
@@ -122,7 +122,7 @@ public class SAT {
         Declaracion d = null;
 
         if (marca.isEmpty() || linea.isEmpty() || fecha_declaracion.isEmpty()) {
-            txt_error = "El parámetro \"marca\", \"linea\" o \"fecha de declaración\" vienen vacíos.";
+            txt_error = "El parámetro 'marca', 'linea' o 'fecha de declaración' vienen vacíos.";
         } else if (modelo < 0 || precio < 0) {
             txt_error = "El modelo y precio de transferencia deben ser de valor positivo.";
         } else if ((d = new Declaracion(marca, linea, modelo, precio, fecha_declaracion)).cod_declaracion == 0) {
